@@ -14,6 +14,9 @@ struct Tent: Equatable {
     var tentPosition: Int
    var shadowRadius: CGFloat = 0
     var couldSelect: Bool = false
+    var haveHelmet = false
+    var boomStart = false
+    var crashed = false
 }
 
 struct Warrior: Equatable {
@@ -22,7 +25,33 @@ struct Warrior: Equatable {
     var shadowScale: CGFloat = 1
 }
 
+struct Solder: Equatable {
+    var itemName: String
+    var opacity: CGFloat = 1
+    var positionX: CGFloat
+    var positionY: CGFloat
+}
+
+struct Ammunition: Equatable {
+    var itemName: String
+    var opacity: CGFloat = 1
+    var positionX: CGFloat
+    var positionY: CGFloat
+    var angle: CGFloat = 105
+}
+
 class Arrays {
+    
+    static var boomImagesArray = ["spriteBoom1", "spriteBoom2", "spriteBoom3", "spriteBoom4", "spriteBoom5", "spriteBoom6", "spriteBoom7"]
+    
+    static var ammunitionArray: [Ammunition] = [
+        Ammunition(itemName: "arrow", positionX: 0, positionY: 0),
+        Ammunition(itemName: "ball", positionX: 0, positionY: 0, angle: 285),
+        Ammunition(itemName: "spear", positionX: 0, positionY: 0)
+    ]
+    
+    static var yourSolder: Solder = Solder(itemName: "yourHelmet", positionX: -370, positionY: 100)
+    static var enemySolder: Solder = Solder(itemName: "enemyHelmet", positionX: 370, positionY: 100)
     
     static var warriorArray: [Warrior] = [
         Warrior(itemName: "arrowWarrior"),
