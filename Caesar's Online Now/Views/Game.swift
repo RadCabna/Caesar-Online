@@ -32,116 +32,13 @@ struct Game: View {
     @State private var yourCommandorName = "goodKnight2"
     @State private var enemyCommandorName = "evilKnight1"
     @State private var yourStage: Int = 0
-    @State private var enemyStage: Int = 0
+    @State private var enemyStage: Int = 1
     @State private var choseWarriorFrameOffset: CGFloat = 1
     @State private var blinkRedTentTimer: Timer? = nil
     @State private var blinkBlueTentTimer: Timer? = nil
     var body: some View {
         ZStack {
             Background(backgroundNumber: 6)
-            Image("pauseButton")
-                .resizable()
-                .scaledToFit()
-                .frame(width: screenWidth*0.07)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .padding()
-            HStack(spacing: screenWidth*0.1) {
-                Image("actionFrame")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: screenWidth*0.13)
-                    .overlay(
-                        Image(yourTurn ? "goText" : "waitText")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: screenWidth*0.09, maxHeight: screenWidth*0.03)
-                    )
-                Image("scoreFrame")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: screenWidth*0.18)
-                Image("actionFrame")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: screenWidth*0.13)
-                    .overlay(
-                        Image(!yourTurn ? "goText" : "waitText")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxWidth: screenWidth*0.09, maxHeight: screenWidth*0.03)
-                    )
-            }
-            .frame(maxHeight: .infinity, alignment: .top)
-            .padding(.top)
-            ForEach(0..<redTentArray.count, id: \.self) { item in
-                ZStack {
-                    Image(redTentArray[item].itemName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width:screenWidth*0.07)
-                        .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
-                        .shadow(color: .white, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
-                        .shadow(color: .white, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
-                        .offset(y: redTentArray[item].itemName == "blastMark" ? screenWidth*0.02 : 0)
-                    BoomSprite(startBoom: redTentArray[item].boomStart)
-                        .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
-                }
-                    .onTapGesture {
-                        selectYourTent(item: item)
-                    }
-            }
-            ForEach(0..<blueTentArray.count, id: \.self) { item in
-                ZStack {
-                    Image(blueTentArray[item].itemName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width:screenWidth*0.07)
-                        .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
-                        .shadow(color: .white, radius: blueTentArray[item].couldSelect ? blueTentArray[item].shadowRadius : 0)
-                        .shadow(color: .white, radius: blueTentArray[item].couldSelect ? blueTentArray[item].shadowRadius : 0)
-                        .offset(y: blueTentArray[item].itemName == "blastMark" ? screenWidth*0.02 : 0)
-                    BoomSprite(startBoom: blueTentArray[item].boomStart)
-                        .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
-                }
-                    .onTapGesture {
-                        tapOnTargetTent(item: item)
-                    }
-                    
-            }
-            ZStack {
-                Image("choseWarriorFrame")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: screenWidth*0.35)
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    .ignoresSafeArea()
-                HStack {
-                    ForEach(0..<warriorArray.count, id: \.self) { item in
-                        ZStack {
-                            Image(warriorArray[item].itemName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: screenWidth*0.1)
-                                .scaleEffect(x: warriorArray[item].shadowScale, y: warriorArray[item].shadowScale)
-                                .opacity(warriorArray[item].opacity)
-                            Image(warriorArray[item].itemName)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: screenWidth*0.1)
-                        }
-                        .onTapGesture {
-                            selectWarrior(item: item)
-                        }
-                    }
-                }
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .padding(.bottom, screenHeight*0.01)
-                .ignoresSafeArea()
-               
-            }
-                .frame(maxHeight: .infinity, alignment: .bottom)
-                .ignoresSafeArea()
-                .offset(y: screenWidth*0.2*choseWarriorFrameOffset)
             HStack {
                 ZStack {
                     if warriorNumber != 0 {
@@ -181,6 +78,109 @@ struct Game: View {
                         .frame(width: screenWidth*0.06)
                 }
             }
+            ForEach(0..<redTentArray.count, id: \.self) { item in
+                ZStack {
+                    Image(redTentArray[item].itemName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width:screenWidth*0.07)
+                        .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
+                        .shadow(color: .white, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
+                        .shadow(color: .white, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
+                        .offset(y: redTentArray[item].itemName == "blastMark" ? screenWidth*0.02 : 0)
+                    BoomSprite(startBoom: redTentArray[item].boomStart)
+                        .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
+                }
+                    .onTapGesture {
+                        selectYourTent(item: item)
+                    }
+            }
+            ForEach(0..<blueTentArray.count, id: \.self) { item in
+                ZStack {
+                    Image(blueTentArray[item].itemName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width:screenWidth*0.07)
+                        .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
+                        .shadow(color: .red, radius: blueTentArray[item].couldSelect ? blueTentArray[item].shadowRadius : 0)
+                        .shadow(color: .red, radius: blueTentArray[item].couldSelect ? blueTentArray[item].shadowRadius : 0)
+                        .offset(y: blueTentArray[item].itemName == "blastMark" ? screenWidth*0.02 : 0)
+                    BoomSprite(startBoom: blueTentArray[item].boomStart)
+                        .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
+                }
+                    .onTapGesture {
+                        tapOnTargetTent(item: item)
+                    }
+                    
+            }
+            ZStack {
+                Image("choseWarriorFrame")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth*0.35)
+                    .frame(maxHeight: .infinity, alignment: .bottom)
+                    .ignoresSafeArea()
+                HStack {
+                    ForEach(0..<warriorArray.count, id: \.self) { item in
+                        ZStack {
+                            Image(warriorArray[item].itemName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: screenWidth*0.1)
+                                .scaleEffect(x: warriorArray[item].shadowScale, y: warriorArray[item].shadowScale)
+                                .opacity(warriorArray[item].opacity)
+                            Image(warriorArray[item].itemName)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: screenWidth*0.1)
+                        }
+                        .onTapGesture {
+                            youSelectWarrior(item: item)
+                        }
+                    }
+                }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .padding(.bottom, screenHeight*0.01)
+                .ignoresSafeArea()
+               
+            }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .ignoresSafeArea()
+                .offset(y: screenWidth*0.2*choseWarriorFrameOffset)
+            Image("pauseButton")
+                .resizable()
+                .scaledToFit()
+                .frame(width: screenWidth*0.07)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding()
+            HStack(spacing: screenWidth*0.1) {
+                Image("actionFrame")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth*0.13)
+                    .overlay(
+                        Image(yourTurn ? "goText" : "waitText")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: screenWidth*0.09, maxHeight: screenWidth*0.03)
+                    )
+                Image("scoreFrame")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth*0.18)
+                Image("actionFrame")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: screenWidth*0.13)
+                    .overlay(
+                        Image(!yourTurn ? "goText" : "waitText")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: screenWidth*0.09, maxHeight: screenWidth*0.03)
+                    )
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+            .padding(.top)
             Group {
                 Image(yourSolder.itemName)
                     .resizable()
@@ -218,23 +218,37 @@ struct Game: View {
         
         .onChange(of: yourStage) { _ in
         showPossibleSteps()
+           
         }
         
         .onChange(of: enemyStage) { _ in
-                enemyAttack()
+                
             enemySelectTent()
         }
         
         .onChange(of: yourTurn) { _ in
         showPossibleSteps()
+            enemyAttack()
+            print("---")
+            print(yourTurn)
+            print(yourStage)
+            print(enemyStage)
+            print(yourTurn)
         }
         
         .onAppear {
+            print("---")
+            print(yourTurn)
+            print(yourStage)
+            print(enemyStage)
+            print(yourTurn)
 //            showPossibleSteps()
             showChoseWarriorFrame()
             helmetAnimation()
         }
     }
+    
+    
     
     func tapOnTargetTent(item: Int) {
         if blueTentArray[item].couldSelect && blueTentArray[item].itemName != "blastMark" {
@@ -254,23 +268,29 @@ struct Game: View {
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                enemyStage = 0
+                enemyStage = 1
                 withAnimation() {
                     enemySolder = Arrays.enemySolder
                 }
+                yourStage += 1
                 yourTurn.toggle()
-                yourStage = 3
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8.5) {
+//                if enemyStage == 1 {
+//                    enemyStage += 1
+//                }
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-             enemyStage = 2
+               
+                yourStage += 1
                 yourTurn.toggle()
-                yourStage = 3
             }
         }
     }
     
     func ammunitionAnimation() {
+        ammunitionArray[ammunitionNumber].angle = Arrays.ammunitionArray[ammunitionNumber].angle
         withAnimation(Animation.easeInOut(duration: 1)) {
             ammunitionArray[ammunitionNumber].opacity = 1
         }
@@ -310,18 +330,25 @@ struct Game: View {
     }
     
     func selectYourTent(item: Int) {
+        print("---")
+        print(yourTurn)
+        print(yourStage)
+        print(enemyStage)
+        print(yourTurn)
         if redTentArray[item].couldSelect {
-//            .offset(x: yourSolder.positionX*screenWidth/880, y: yourSolder.positionY*screenWidth/880)
             ammunitionArray[ammunitionNumber].positionX = redTentArray[item].positionX
             ammunitionArray[ammunitionNumber].positionY = redTentArray[item].positionY
             withAnimation(Animation.easeInOut(duration: 1.5)) {
                 yourSolder.positionX = redTentArray[item].positionX
                 yourSolder.positionY = redTentArray[item].positionY
+                for i in 0..<redTentArray.count {
+                    redTentArray[i].haveHelmet = false
+                }
                 redTentArray[item].haveHelmet = true
             }
             hidePossibleSteps()
             yourTurn.toggle()
-            yourStage = 2
+            yourStage += 1
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 enemySelectTent()
             }
@@ -329,20 +356,34 @@ struct Game: View {
     }
     
     func enemySelectTent() {
-        if !yourTurn && enemyStage == 0 {
-            var randomePosition = 0
-            withAnimation() {
-//                enemyWarriorNumber = Int.random(in: 1...3)
-                enemyWarriorNumber = 1
-                enemyAmmunitionNumber = enemyWarriorNumber - 1
-                updateEnemyWarriorSign()
+        if !yourTurn && (enemyStage == 0 || enemyStage == 1 || enemyStage == 3 || enemyStage == 5 || enemyStage == 7) {
+            var randomePosition = 10
+            repeat {
+                if enemyStage == 0 || enemyStage == 1 {
+                    randomePosition = Int.random(in: 0..<5)
+                }
+                if enemyStage == 3 {
+                    randomePosition = Int.random(in: 5..<9)
+                }
+                if enemyStage == 5 {
+                    randomePosition = Int.random(in: 9..<12)
+                }
+                if enemyStage == 7 {
+                    randomePosition = Int.random(in: 12..<14)
+                }
+            } while blueTentArray[randomePosition].itemName == "blastMark"
+            if enemyStage == 0 || enemyStage == 1{
+                enemySelectWarrior()
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                repeat {
-                    randomePosition = Int.random(in: 0..<5)
-                } while blueTentArray[randomePosition].itemName == "blastMark"
+               
                 withAnimation(Animation.easeInOut(duration: 1.5)) {
-                    enemySolder.opacity = 0
+//                    enemySolder.opacity = 0
+                    enemySolder.positionX = blueTentArray[randomePosition].positionX
+                    enemySolder.positionY = blueTentArray[randomePosition].positionY
+                }
+                for i in 0..<blueTentArray.count {
+                    blueTentArray[i].haveHelmet = false
                 }
                 blueTentArray[randomePosition].haveHelmet = true
                 enemyAmmunitionArray[enemyAmmunitionNumber].positionX = 307
@@ -352,22 +393,32 @@ struct Game: View {
                 } else {
                     enemyAmmunitionArray[enemyAmmunitionNumber].angle = 70
                 }
-                enemyStage = 1
+                enemyStage += 1
                 yourTurn.toggle()
             }
         }
     }
     
     func enemyAttack() {
-        if !yourTurn && enemyStage == 2 {
-            let possibleIndex = [1,2,3,4,5]
-            var possibleRedTentTargetArray: [Tent] = []
-            for i in 0..<redTentArray.count {
-                if !redTentArray[i].crashed && possibleIndex.contains(redTentArray[i].tentPosition) {
-                    possibleRedTentTargetArray.append(redTentArray[i])
-                }
+        if !yourTurn && (enemyStage == 2 || enemyStage == 4 || enemyStage == 6 || enemyStage == 8) {
+            var possibleIndex: [Int] = [0,1,2,3,4]
+            switch yourStage {
+            case 3:
+                possibleIndex = [0,1,2,3,4]
+            case 5:
+                possibleIndex = [5,6,7,8]
+            case 7:
+                possibleIndex = [9,10,11]
+            case 9:
+                possibleIndex = [12,13]
+            default:
+                possibleIndex = [0,1,2,3,4]
             }
-            let randomeIndex = Int.random(in: 0..<possibleRedTentTargetArray.count-1)
+           
+           
+            var randomeIndex = 0
+            randomeIndex = possibleIndex.randomElement() ?? 0
+//            randomeIndex =  0
             yourTentPositionX = redTentArray[randomeIndex].positionX
             yourTentPositionY = redTentArray[randomeIndex].positionY
             withAnimation(Animation.easeInOut(duration: 1)) {
@@ -417,18 +468,17 @@ struct Game: View {
                     }
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                    yourStage = 0
+                    yourStage = 1
                     withAnimation() {
                         yourSolder = Arrays.yourSolder
                     }
                     yourTurn.toggle()
-                    enemyStage = 3
+                    enemyStage += 1
                 }
             } else {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                 yourStage = 2
                     yourTurn.toggle()
-                    enemyStage = 3
+                    enemyStage += 1
                 }
             }
         }
@@ -462,7 +512,15 @@ struct Game: View {
         }
     }
     
-    func selectWarrior(item: Int) {
+    func enemySelectWarrior() {
+        withAnimation() {
+            enemyWarriorNumber = Int.random(in: 1...3)
+            enemyAmmunitionNumber = enemyWarriorNumber - 1
+        }
+        updateEnemyWarriorSign()
+    }
+    
+    func youSelectWarrior(item: Int) {
         withAnimation() {
             warriorNumber = item+1
         }
@@ -474,6 +532,7 @@ struct Game: View {
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             closeChoseWarriorFrame()
+            
             yourStage = 1
         }
     }
@@ -497,6 +556,31 @@ struct Game: View {
         }
     }
     
+    func updateYourPosileStaps() -> [Int]{
+        var possiblePositions = [1,2,3,4,5]
+        switch enemyStage {
+        case 2:
+            possiblePositions = [1,2,3,4,5]
+        case 3:
+            possiblePositions = [1,2,3,4,5]
+        case 4:
+            possiblePositions = [6,7,8,9]
+        case 5:
+            possiblePositions = [6,7,8,9]
+        case 6:
+            possiblePositions = [10,11,12]
+        case 7:
+            possiblePositions = [10,11,12]
+        case 8:
+            possiblePositions = [13,14]
+        case 9:
+            possiblePositions = [13,14]
+        default:
+            possiblePositions = [1,2,3,4,5]
+        }
+        return possiblePositions
+    }
+    
     func showPossibleSteps() {
         if yourTurn {
             if yourStage == 1 {
@@ -511,7 +595,8 @@ struct Game: View {
                 blinkRedTentShadow()
             }
             if yourStage == 2 {
-                let possiblePositions = [1,2,3,4,5]
+                var possiblePositions = [1,2,3,4,5]
+                possiblePositions = updateYourPosileStaps()
                 for i in 0..<blueTentArray.count {
                     if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
                         blueTentArray[i].couldSelect = true
@@ -531,6 +616,64 @@ struct Game: View {
                     }
                 }
                 blinkRedTentShadow()
+            }
+            if yourStage == 4 {
+                var possiblePositions = [6,7,8,9]
+                possiblePositions = updateYourPosileStaps()
+                for i in 0..<blueTentArray.count {
+                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
+                        blueTentArray[i].couldSelect = true
+                    } else {
+                        blueTentArray[i].couldSelect = false
+                    }
+                }
+                blinkBlueTentShadow()
+            }
+            if yourStage == 5 {
+                let possiblePositions = [10,11,12]
+                for i in 0..<redTentArray.count {
+                    if possiblePositions.contains(redTentArray[i].tentPosition) && redTentArray[i].itemName != "blastMark" {
+                        redTentArray[i].couldSelect = true
+                    } else {
+                        redTentArray[i].couldSelect = false
+                    }
+                }
+                blinkRedTentShadow()
+            }
+            if yourStage == 6 {
+                var possiblePositions = [10,11,12]
+                possiblePositions = updateYourPosileStaps()
+                for i in 0..<blueTentArray.count {
+                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
+                        blueTentArray[i].couldSelect = true
+                    } else {
+                        blueTentArray[i].couldSelect = false
+                    }
+                }
+                blinkBlueTentShadow()
+            }
+            if yourStage == 7 {
+                let possiblePositions = [13,14]
+                for i in 0..<redTentArray.count {
+                    if possiblePositions.contains(redTentArray[i].tentPosition) && redTentArray[i].itemName != "blastMark" {
+                        redTentArray[i].couldSelect = true
+                    } else {
+                        redTentArray[i].couldSelect = false
+                    }
+                }
+                blinkRedTentShadow()
+            }
+            if yourStage == 8 {
+                var possiblePositions = [13,14]
+                possiblePositions = updateYourPosileStaps()
+                for i in 0..<blueTentArray.count {
+                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
+                        blueTentArray[i].couldSelect = true
+                    } else {
+                        blueTentArray[i].couldSelect = false
+                    }
+                }
+                blinkBlueTentShadow()
             }
         }
     }
