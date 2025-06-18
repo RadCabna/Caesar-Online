@@ -10,6 +10,10 @@ import SwiftUI
 struct Game: View {
     @AppStorage("yourCommandorNumber") var yourCommandorNumber = 1
     @AppStorage("enemyCommandorNumber") var enemyCommandorNumber = 1
+    @AppStorage("yourLevelCount") var yourLevelCount = 0
+    @AppStorage("enemyLevelCount") var enemyLevelCount = 0
+    @AppStorage("levelNumber") var levelNumber = 1
+    @State private var levelsCountData = UserDefaults.standard.array(forKey: "levelsCountData") as? [Int] ?? [3,0,0,0,0,0]
     @State private var yourTurn: Bool = true
     @State private var redTentArray = Arrays.redTensArray
     @State private var blueTentArray = Arrays.blueTensArray
@@ -23,6 +27,7 @@ struct Game: View {
     @State private var enemyTentPositionY: CGFloat = 0
     @State private var yourTentPositionX: CGFloat = 0
     @State private var yourTentPositionY: CGFloat = 0
+    @State private var winPodOpacity: CGFloat = 0
     @State private var enemyWarriorNumber = 0
     @State private var warriorNumber = 0
     @State private var ammunitionNumber = 0
@@ -32,10 +37,13 @@ struct Game: View {
     @State private var yourCommandorName = "goodKnight2"
     @State private var enemyCommandorName = "evilKnight1"
     @State private var yourStage: Int = 0
-    @State private var enemyStage: Int = 1
+    @State private var enemyStage: Int = 0
     @State private var choseWarriorFrameOffset: CGFloat = 1
     @State private var blinkRedTentTimer: Timer? = nil
     @State private var blinkBlueTentTimer: Timer? = nil
+    @State private var youWin: Bool = false
+    @State private var youLose: Bool = false
+    @State private var timerCount = 0
     var body: some View {
         ZStack {
             Background(backgroundNumber: 6)
@@ -85,11 +93,16 @@ struct Game: View {
                         .scaledToFit()
                         .frame(width:screenWidth*0.07)
                         .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
-                        .shadow(color: .white, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
-                        .shadow(color: .white, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
+                        .shadow(color: .blue, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
+                        .shadow(color: .blue, radius: redTentArray[item].couldSelect ? redTentArray[item].shadowRadius : 0)
                         .offset(y: redTentArray[item].itemName == "blastMark" ? screenWidth*0.02 : 0)
                     BoomSprite(startBoom: redTentArray[item].boomStart)
                         .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
+                    SmokeSprite(startSmoke: redTentArray[item].smokeStart)
+                        .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
+                    SmokeSprite(startSmoke: redTentArray[item].smokeStart)
+                        .offset(x: redTentArray[item].positionX*screenWidth/880, y: redTentArray[item].positionY*screenWidth/880)
+
                 }
                     .onTapGesture {
                         selectYourTent(item: item)
@@ -106,6 +119,10 @@ struct Game: View {
                         .shadow(color: .red, radius: blueTentArray[item].couldSelect ? blueTentArray[item].shadowRadius : 0)
                         .offset(y: blueTentArray[item].itemName == "blastMark" ? screenWidth*0.02 : 0)
                     BoomSprite(startBoom: blueTentArray[item].boomStart)
+                        .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
+                    SmokeSprite(startSmoke: blueTentArray[item].smokeStart)
+                        .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
+                    SmokeSprite(startSmoke: blueTentArray[item].smokeStart)
                         .offset(x: blueTentArray[item].positionX*screenWidth/880, y: blueTentArray[item].positionY*screenWidth/880)
                 }
                     .onTapGesture {
@@ -153,6 +170,9 @@ struct Game: View {
                 .frame(width: screenWidth*0.07)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .padding()
+                .onTapGesture {
+                    resetGame()
+                }
             HStack(spacing: screenWidth*0.1) {
                 Image("actionFrame")
                     .resizable()
@@ -181,6 +201,12 @@ struct Game: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .padding(.top)
+            Image("winPod")
+                .resizable()
+                .scaledToFit()
+                .frame(width: screenWidth*0.1)
+                .offset(y: screenWidth*0.08)
+                .opacity(winPodOpacity)
             Group {
                 Image(yourSolder.itemName)
                     .resizable()
@@ -214,6 +240,12 @@ struct Game: View {
                     .offset(x: enemyAmmunitionArray[enemyAmmunitionNumber].positionX*screenWidth/880, y: enemyAmmunitionArray[enemyAmmunitionNumber].positionY*screenWidth/880)
                     .opacity(enemyAmmunitionArray[enemyAmmunitionNumber].opacity)
             }
+            if youLose {
+                YouLose(youLose: $youLose)
+            }
+            if youWin {
+                YouWin(youWin: $youWin)
+            }
         }
         
         .onChange(of: yourStage) { _ in
@@ -222,13 +254,29 @@ struct Game: View {
         }
         
         .onChange(of: enemyStage) { _ in
-                
-            enemySelectTent()
+            if enemyStage == 0 {
+                enemySelectWarrior()
+            }
+        }
+        
+        .onChange(of: youWin) { _ in
+        if !youWin {
+               resetGame()
+            }
         }
         
         .onChange(of: yourTurn) { _ in
-        showPossibleSteps()
-            enemyAttack()
+            if enemyStage == 0 {
+                enemySelectWarrior()
+            }
+            if !yourTurn && enemyStage == 9 {
+                enemyGoToPodium()
+            }
+            if yourTurn && yourStage == 9 {
+                youGoToPodium()
+            }
+            showPossibleSteps()
+            gameStagesController()
             print("---")
             print(yourTurn)
             print(yourStage)
@@ -242,13 +290,82 @@ struct Game: View {
             print(yourStage)
             print(enemyStage)
             print(yourTurn)
-//            showPossibleSteps()
             showChoseWarriorFrame()
             helmetAnimation()
         }
     }
     
+    func resetGame() {
+        redTentArray = Arrays.redTensArray
+        blueTentArray = Arrays.blueTensArray
+        yourSolder = Arrays.yourSolder
+        enemySolder = Arrays.enemySolder
+        winPodOpacity = 0
+        yourStage = 0
+        enemyStage = 0
+        showChoseWarriorFrame()
+        stopBlinkRedTentShadow()
+        stopBlinkBlueTentShadow()
+        enemyWarriorNumber = 0
+        warriorNumber = 0
+
+    }
     
+    func youGoToPodium() {
+        withAnimation(Animation.easeInOut(duration: 1)) {
+            winPodOpacity = 1
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation(Animation.easeInOut(duration: 1)) {
+                yourSolder.positionX = 0
+                yourSolder.positionY = 0
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            youWin = true
+        }
+    }
+    
+    func enemyGoToPodium() {
+        withAnimation(Animation.easeInOut(duration: 1)) {
+            winPodOpacity = 1
+            enemySolder.opacity = 1
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation(Animation.easeInOut(duration: 1)) {
+                enemySolder.positionX = 0
+                enemySolder.positionY = 0
+            }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
+            youLose = true
+        }
+    }
+    
+    func gameStagesController() {
+        switch enemyStage {
+        case 1:
+            enemySelectTent()
+        case 2:
+            enemyAttack()
+        case 3:
+            enemySelectTent()
+        case 4:
+            enemyAttack()
+        case 5:
+            enemySelectTent()
+        case 6:
+            enemyAttack()
+        case 7:
+            enemySelectTent()
+        case 8:
+            enemyAttack()
+        case 9:
+            enemySelectTent()
+        default:
+            showPossibleSteps()
+        }
+    }
     
     func tapOnTargetTent(item: Int) {
         if blueTentArray[item].couldSelect && blueTentArray[item].itemName != "blastMark" {
@@ -256,11 +373,17 @@ struct Game: View {
             enemyTentPositionY = blueTentArray[item].positionY
             ammunitionAnimation()
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                blueTentArray[item].boomStart.toggle()
+                if warriorNumber == 2 {
+                    blueTentArray[item].boomStart.toggle()
+                } else {
+                    blueTentArray[item].smokeStart.toggle()
+                }
                 blueTentArray[item].itemName = "blastMark"
             }
         }
         hidePossibleSteps()
+        stopBlinkRedTentShadow()
+        stopBlinkBlueTentShadow()
         if blueTentArray[item].haveHelmet {
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 withAnimation() {
@@ -268,7 +391,7 @@ struct Game: View {
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-                enemyStage = 1
+                enemyStage = 0
                 withAnimation() {
                     enemySolder = Arrays.enemySolder
                 }
@@ -282,9 +405,8 @@ struct Game: View {
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
-               
-                yourStage += 1
                 yourTurn.toggle()
+                yourStage += 1
             }
         }
     }
@@ -347,38 +469,48 @@ struct Game: View {
                 redTentArray[item].haveHelmet = true
             }
             hidePossibleSteps()
+            stopBlinkRedTentShadow()
+            stopBlinkBlueTentShadow()
             yourTurn.toggle()
             yourStage += 1
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                enemySelectTent()
+//                enemySelectTent()
+                enemyStage += 1
             }
         }
     }
     
     func enemySelectTent() {
-        if !yourTurn && (enemyStage == 0 || enemyStage == 1 || enemyStage == 3 || enemyStage == 5 || enemyStage == 7) {
+        if !yourTurn && (enemyStage == 1 || enemyStage == 3 || enemyStage == 5 || enemyStage == 7) {
             var randomePosition = 10
             repeat {
-                if enemyStage == 0 || enemyStage == 1 {
+                if enemyStage == 1 {
                     randomePosition = Int.random(in: 0..<5)
+                    enemyAmmunitionArray[enemyAmmunitionNumber].positionX = 307
                 }
                 if enemyStage == 3 {
                     randomePosition = Int.random(in: 5..<9)
+                    enemyAmmunitionArray[enemyAmmunitionNumber].positionX = 224
                 }
                 if enemyStage == 5 {
                     randomePosition = Int.random(in: 9..<12)
+                    enemyAmmunitionArray[enemyAmmunitionNumber].positionX = 147
                 }
                 if enemyStage == 7 {
                     randomePosition = Int.random(in: 12..<14)
+                    enemyAmmunitionArray[enemyAmmunitionNumber].positionX = 63
                 }
             } while blueTentArray[randomePosition].itemName == "blastMark"
-            if enemyStage == 0 || enemyStage == 1{
-                enemySelectWarrior()
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-               
+//            if enemyStage == 0 {
+//                enemySelectWarrior()
+//            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation(Animation.easeInOut(duration: 1.5)) {
 //                    enemySolder.opacity = 0
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                withAnimation(Animation.easeInOut(duration: 1.5)) {
                     enemySolder.positionX = blueTentArray[randomePosition].positionX
                     enemySolder.positionY = blueTentArray[randomePosition].positionY
                 }
@@ -386,15 +518,19 @@ struct Game: View {
                     blueTentArray[i].haveHelmet = false
                 }
                 blueTentArray[randomePosition].haveHelmet = true
-                enemyAmmunitionArray[enemyAmmunitionNumber].positionX = 307
+                
                 enemyAmmunitionArray[enemyAmmunitionNumber].positionY = 93
                 if enemyAmmunitionArray[enemyAmmunitionNumber].itemName == "ball" {
                     enemyAmmunitionArray[enemyAmmunitionNumber].angle = 250
                 } else {
                     enemyAmmunitionArray[enemyAmmunitionNumber].angle = 70
                 }
-                enemyStage += 1
                 yourTurn.toggle()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                if enemyStage == 1 {
+//                    enemyStage += 1
+//                }
             }
         }
     }
@@ -417,7 +553,9 @@ struct Game: View {
            
            
             var randomeIndex = 0
-            randomeIndex = possibleIndex.randomElement() ?? 0
+            repeat {
+                randomeIndex = possibleIndex.randomElement() ?? 0
+            } while redTentArray[randomeIndex].itemName == "blastMark"
 //            randomeIndex =  0
             yourTentPositionX = redTentArray[randomeIndex].positionX
             yourTentPositionY = redTentArray[randomeIndex].positionY
@@ -458,7 +596,16 @@ struct Game: View {
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                redTentArray[randomeIndex].boomStart.toggle()
+//                if warriorNumber == 2 {
+//                    blueTentArray[item].boomStart.toggle()
+//                } else {
+//                    blueTentArray[item].smokeStart.toggle()
+//                }
+                if enemyWarriorNumber == 2 {
+                    redTentArray[randomeIndex].boomStart.toggle()
+                } else {
+                    redTentArray[randomeIndex].smokeStart.toggle()
+                }
                 redTentArray[randomeIndex].itemName = "blastMark"
             }
             if redTentArray[randomeIndex].haveHelmet {
@@ -518,6 +665,7 @@ struct Game: View {
             enemyAmmunitionNumber = enemyWarriorNumber - 1
         }
         updateEnemyWarriorSign()
+        enemyStage += 1
     }
     
     func youSelectWarrior(item: Int) {
@@ -534,6 +682,10 @@ struct Game: View {
             closeChoseWarriorFrame()
             
             yourStage = 1
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            warriorArray[item].opacity = 1
+            warriorArray[item].shadowScale = 1
         }
     }
     
@@ -582,103 +734,54 @@ struct Game: View {
     }
     
     func showPossibleSteps() {
-        if yourTurn {
-            if yourStage == 1 {
-                let possiblePositions = [1,2,3,4,5]
-                for i in 0..<redTentArray.count {
-                    if possiblePositions.contains(redTentArray[i].tentPosition) && redTentArray[i].itemName != "blastMark" {
-                        redTentArray[i].couldSelect = true
-                    } else {
-                        redTentArray[i].couldSelect = false
-                    }
-                }
-                blinkRedTentShadow()
+        guard yourTurn else { return }
+        
+        let possiblePositions: [Int]
+        var isRedTent = false
+        
+        switch yourStage {
+        case 1:
+            possiblePositions = [1, 2, 3, 4, 5]
+            isRedTent = true
+        case 2:
+            possiblePositions = updateYourPosileStaps()
+        case 3:
+            possiblePositions = [6, 7, 8, 9]
+            isRedTent = true
+        case 4:
+            possiblePositions = updateYourPosileStaps()
+        case 5:
+            possiblePositions = [10, 11, 12]
+            isRedTent = true
+        case 6:
+            possiblePositions = updateYourPosileStaps()
+        case 7:
+            possiblePositions = [13, 14]
+            isRedTent = true
+        case 8:
+            possiblePositions = updateYourPosileStaps()
+        default:
+            return
+        }
+        
+        if isRedTent {
+            for i in 0..<redTentArray.count {
+                redTentArray[i].couldSelect = possiblePositions.contains(redTentArray[i].tentPosition) &&
+                                              redTentArray[i].itemName != "blastMark"
             }
-            if yourStage == 2 {
-                var possiblePositions = [1,2,3,4,5]
-                possiblePositions = updateYourPosileStaps()
-                for i in 0..<blueTentArray.count {
-                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
-                        blueTentArray[i].couldSelect = true
-                    } else {
-                        blueTentArray[i].couldSelect = false
-                    }
-                }
-                blinkBlueTentShadow()
+            blinkRedTentShadow()
+        } else {
+            for i in 0..<blueTentArray.count {
+                blueTentArray[i].couldSelect = possiblePositions.contains(blueTentArray[i].tentPosition) &&
+                                               blueTentArray[i].itemName != "blastMark"
             }
-            if yourStage == 3 {
-                let possiblePositions = [6,7,8,9]
-                for i in 0..<redTentArray.count {
-                    if possiblePositions.contains(redTentArray[i].tentPosition) && redTentArray[i].itemName != "blastMark" {
-                        redTentArray[i].couldSelect = true
-                    } else {
-                        redTentArray[i].couldSelect = false
-                    }
-                }
-                blinkRedTentShadow()
-            }
-            if yourStage == 4 {
-                var possiblePositions = [6,7,8,9]
-                possiblePositions = updateYourPosileStaps()
-                for i in 0..<blueTentArray.count {
-                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
-                        blueTentArray[i].couldSelect = true
-                    } else {
-                        blueTentArray[i].couldSelect = false
-                    }
-                }
-                blinkBlueTentShadow()
-            }
-            if yourStage == 5 {
-                let possiblePositions = [10,11,12]
-                for i in 0..<redTentArray.count {
-                    if possiblePositions.contains(redTentArray[i].tentPosition) && redTentArray[i].itemName != "blastMark" {
-                        redTentArray[i].couldSelect = true
-                    } else {
-                        redTentArray[i].couldSelect = false
-                    }
-                }
-                blinkRedTentShadow()
-            }
-            if yourStage == 6 {
-                var possiblePositions = [10,11,12]
-                possiblePositions = updateYourPosileStaps()
-                for i in 0..<blueTentArray.count {
-                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
-                        blueTentArray[i].couldSelect = true
-                    } else {
-                        blueTentArray[i].couldSelect = false
-                    }
-                }
-                blinkBlueTentShadow()
-            }
-            if yourStage == 7 {
-                let possiblePositions = [13,14]
-                for i in 0..<redTentArray.count {
-                    if possiblePositions.contains(redTentArray[i].tentPosition) && redTentArray[i].itemName != "blastMark" {
-                        redTentArray[i].couldSelect = true
-                    } else {
-                        redTentArray[i].couldSelect = false
-                    }
-                }
-                blinkRedTentShadow()
-            }
-            if yourStage == 8 {
-                var possiblePositions = [13,14]
-                possiblePositions = updateYourPosileStaps()
-                for i in 0..<blueTentArray.count {
-                    if possiblePositions.contains(blueTentArray[i].tentPosition) && blueTentArray[i].itemName != "blastMark" {
-                        blueTentArray[i].couldSelect = true
-                    } else {
-                        blueTentArray[i].couldSelect = false
-                    }
-                }
-                blinkBlueTentShadow()
-            }
+            blinkBlueTentShadow()
         }
     }
     
     func blinkRedTentShadow() {
+        timerCount += 1
+        print(timerCount)
         for i in 0..<redTentArray.count {
             blinkRedTentTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(1), repeats: true) { _ in
                 if redTentArray[i].couldSelect && redTentArray[i].itemName != "blastMark"{
@@ -698,6 +801,8 @@ struct Game: View {
     func stopBlinkRedTentShadow() {
         blinkRedTentTimer?.invalidate()
         blinkRedTentTimer = nil
+        timerCount -= 1
+        print(timerCount)
     }
     
     func blinkBlueTentShadow() {
