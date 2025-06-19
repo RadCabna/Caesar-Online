@@ -32,6 +32,12 @@ struct YouWin: View {
                         hideViewAnimation()
                         coinCount += 100
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            yourLevelCount = 0
+                            enemyLevelCount = 0
+                            if levelsCountData[levelNumber] < 3 {
+                                levelsCountData[levelNumber] = 0
+                                UserDefaults.standard.setValue(levelsCountData, forKey: "levelsCountData")
+                            }
                             coordinator.navigate(to: .mainMenu)
                         }
                     }
@@ -43,7 +49,18 @@ struct YouWin: View {
                         hideViewAnimation()
                         coinCount += 100
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            youWin.toggle()
+                            if levelsCountData[levelNumber] < 3 {
+                                levelsCountData[levelNumber] += 1
+                                UserDefaults.standard.setValue(levelsCountData, forKey: "levelsCountData")
+                            }
+                            if yourLevelCount < 2 {
+                                yourLevelCount += 1
+                                youWin.toggle()
+                            } else {
+                                yourLevelCount = 0
+                                enemyLevelCount = 0
+                                coordinator.navigate(to: .choseLevel)
+                            }
                         }
                     }
             }

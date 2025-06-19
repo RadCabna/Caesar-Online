@@ -31,7 +31,7 @@ struct SmokeSprite: View {
     func smokeAnimation() {
         var delay: Double = 0.1
         imageOpacity = 1
-        for i in 0..<smokeImagesArray.count {
+        for _ in 0..<smokeImagesArray.count {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if imageIndex < 6 {
                     imageIndex += 1

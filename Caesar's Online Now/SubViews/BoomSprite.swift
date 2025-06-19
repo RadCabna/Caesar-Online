@@ -28,7 +28,7 @@ struct BoomSprite: View {
     func boomAnimation() {
         var delay: Double = 0.1
         imageOpacity = 1
-        for i in 0..<boomImagesArray.count {
+        for _ in 0..<boomImagesArray.count {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 if imageIndex < 6 {
                     imageIndex += 1

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct Game: View {
-    @AppStorage("yourCommandorNumber") var yourCommandorNumber = 1
-    @AppStorage("enemyCommandorNumber") var enemyCommandorNumber = 1
+    @AppStorage("yourCommandorNumber") var yourCommandorNumber = 0
+    @AppStorage("enemyCommandorNumber") var enemyCommandorNumber = 0
     @AppStorage("yourLevelCount") var yourLevelCount = 0
     @AppStorage("enemyLevelCount") var enemyLevelCount = 0
     @AppStorage("levelNumber") var levelNumber = 1
@@ -34,7 +34,7 @@ struct Game: View {
     @State private var enemyAmmunitionNumber = 0
     @State private var selectedWarrior = "arrowWarrior"
     @State private var selectedEnemyWarrior = "arrowWarrior"
-    @State private var yourCommandorName = "goodKnight2"
+    @State private var yourCommandorName = "goodKnight1"
     @State private var enemyCommandorName = "evilKnight1"
     @State private var yourStage: Int = 0
     @State private var enemyStage: Int = 0
@@ -43,6 +43,7 @@ struct Game: View {
     @State private var blinkBlueTentTimer: Timer? = nil
     @State private var youWin: Bool = false
     @State private var youLose: Bool = false
+    @State private var showPause = false
     @State private var timerCount = 0
     var body: some View {
         ZStack {
@@ -56,11 +57,11 @@ struct Game: View {
                             .frame(width: screenWidth*0.05)
                             .offset(y: -screenWidth*0.1)
                     }
-                    Image("commandorStand")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: screenWidth*0.08)
-                        .offset(y: screenWidth*0.07)
+//                    Image("commandorStand")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: screenWidth*0.08)
+//                        .offset(y: screenWidth*0.05)
                     Image(yourCommandorName)
                         .resizable()
                         .scaledToFit()
@@ -75,11 +76,11 @@ struct Game: View {
                             .frame(width: screenWidth*0.05)
                             .offset(y: -screenWidth*0.1)
                     }
-                    Image("commandorStand")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: screenWidth*0.08)
-                        .offset(y: screenWidth*0.06)
+//                    Image("commandorStand")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: screenWidth*0.08)
+//                        .offset(y: screenWidth*0.06)
                     Image(enemyCommandorName)
                         .resizable()
                         .scaledToFit()
@@ -171,7 +172,7 @@ struct Game: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
                 .padding()
                 .onTapGesture {
-                    resetGame()
+                    showPause.toggle()
                 }
             HStack(spacing: screenWidth*0.1) {
                 Image("actionFrame")
@@ -188,6 +189,13 @@ struct Game: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: screenWidth*0.18)
+                    .overlay(
+                        Text("\(yourLevelCount) : \(enemyLevelCount)")
+                            .font(Font.custom("CrushYourEnemies", size: screenWidth*0.025))
+                            .foregroundColor(.white)
+                            .shadow(color: .black, radius: 2)
+                            .offset(y: screenWidth*0.017)
+                    )
                 Image("actionFrame")
                     .resizable()
                     .scaledToFit()
@@ -240,6 +248,9 @@ struct Game: View {
                     .offset(x: enemyAmmunitionArray[enemyAmmunitionNumber].positionX*screenWidth/880, y: enemyAmmunitionArray[enemyAmmunitionNumber].positionY*screenWidth/880)
                     .opacity(enemyAmmunitionArray[enemyAmmunitionNumber].opacity)
             }
+            if showPause {
+                Pause(showPause: $showPause)
+            }
             if youLose {
                 YouLose(youLose: $youLose)
             }
@@ -275,6 +286,7 @@ struct Game: View {
             if yourTurn && yourStage == 9 {
                 youGoToPodium()
             }
+            checkGameEnded()
             showPossibleSteps()
             gameStagesController()
             print("---")
@@ -290,9 +302,36 @@ struct Game: View {
             print(yourStage)
             print(enemyStage)
             print(yourTurn)
+            updateCommandors()
             showChoseWarriorFrame()
             helmetAnimation()
         }
+    }
+    
+    func checkGameEnded() {
+        if redTentArray[0].itemName == "blastMark" &&
+            redTentArray[1].itemName == "blastMark" &&
+            redTentArray[2].itemName == "blastMark" &&
+            redTentArray[3].itemName == "blastMark" &&
+            redTentArray[4].itemName == "blastMark" {
+            youLose = true
+        }
+        if redTentArray[12].itemName == "blastMark" &&
+            redTentArray[13].itemName == "blastMark" {
+            youLose = true
+        }
+        if blueTentArray[0].itemName == "blastMark" &&
+            blueTentArray[1].itemName == "blastMark" &&
+            blueTentArray[2].itemName == "blastMark" &&
+            blueTentArray[3].itemName == "blastMark" &&
+            blueTentArray[4].itemName == "blastMark" {
+            youWin = true
+        }
+        if blueTentArray[12].itemName == "blastMark" &&
+            blueTentArray[13].itemName == "blastMark" {
+            youLose = true
+        }
+        
     }
     
     func resetGame() {
@@ -506,7 +545,7 @@ struct Game: View {
 //            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation(Animation.easeInOut(duration: 1.5)) {
-//                    enemySolder.opacity = 0
+                    enemySolder.opacity = 0
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -533,6 +572,39 @@ struct Game: View {
 //                }
             }
         }
+    }
+    
+    func updateCommandors() {
+        switch yourCommandorNumber {
+        case 1:
+            yourCommandorName = "goodKnight2"
+        case 2:
+            yourCommandorName = "goodKnight3"
+        case 3:
+            yourCommandorName = "goodKnight4"
+        case 4:
+            yourCommandorName = "goodKnight5"
+        case 5:
+            yourCommandorName = "goodKnight6"
+        default:
+            yourCommandorName = "goodKnight1"
+        }
+        
+        switch enemyCommandorNumber {
+        case 1:
+            enemyCommandorName = "evilKnight2"
+        case 2:
+            enemyCommandorName = "evilKnight3"
+        case 3:
+            enemyCommandorName = "evilKnight4"
+        case 4:
+            enemyCommandorName = "evilKnight5"
+        case 5:
+            enemyCommandorName = "evilKnight6"
+        default:
+            enemyCommandorName = "evilKnight1"
+        }
+        
     }
     
     func enemyAttack() {

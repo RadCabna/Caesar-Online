@@ -20,35 +20,20 @@ struct Loading: View {
             let isLandscape = width > height
             if isLandscape {
                 ZStack {
-//                    Background()
+                    Background()
                     Color("bgColor").ignoresSafeArea()
-                    VStack {
-                        Image("loadingLogo")
+                    VStack(spacing: height*0.2) {
+                        Image("logoText")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: height*0.5)
+                            .frame(height: height*0.25)
+                            .shadow(color: .black, radius: 5)
                         Text("LOADING...")
-                            .font(Font.custom("Chewy-Regular", size: width*0.05))
+                            .font(Font.custom("CrushYourEnemies", size: width*0.05))
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 2)
                             .shadow(color: .black, radius: 2)
-                        ZStack {
-                            Image("loadingBarBack")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: width*0.5)
-                            
-                            Image("loadingBarFront")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: width*0.495)
-                                .offset(x: -width*0.5*loadingProgress)
-                                .mask(
-                                    Image("loadingBarFront")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: width*0.495)                                )
-                        }
+                       
                     }
                     .offset(y: height*0.05)
                     .opacity(loadingOpacity)
@@ -56,41 +41,26 @@ struct Loading: View {
                 .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             } else {
                 ZStack {
-//                    Background()
+                    Background()
                     Color("bgColor").ignoresSafeArea()
-                    VStack {
-                        Image("loadingLogo")
+                    VStack(spacing: width*0.2) {
+                        Image("logoText")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: width*0.5)
+                            .frame(height: width*0.25)
+                            .shadow(color: .black, radius: 5)
                         Text("LOADING...")
-                            .font(Font.custom("Chewy-Regular", size: height*0.05))
+                            .font(Font.custom("CrushYourEnemies", size: height*0.05))
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 2)
                             .shadow(color: .black, radius: 2)
-                        ZStack {
-                            Image("loadingBarBack")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: height*0.5)
-                            
-                            Image("loadingBarFront")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: height*0.495)
-                                .offset(x: -height*0.5*loadingProgress)
-                                .mask(
-                                    Image("loadingBarFront")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: height*0.495)                                )
-                        }
+                       
                     }
-                    .opacity(loadingOpacity)
+                    .offset(y: height*0.05)
                     .rotationEffect(Angle(degrees: -90))
-                    .offset(x: width*0.05)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                    .opacity(loadingOpacity)
                 }
+                .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
             }
         }
         
@@ -123,9 +93,9 @@ struct Loading: View {
         withAnimation(Animation.easeInOut(duration: 1.5)) {
             loadingOpacity = 1
         }
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-//            coordinator.navigate(to: .mainMenu)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            coordinator.navigate(to: .mainMenu)
+        }
     }
     
 }

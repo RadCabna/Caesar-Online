@@ -41,7 +41,48 @@ struct Ammunition: Equatable {
     var angle: CGFloat = 105
 }
 
+struct BonusTent: Equatable {
+    var itemName: String = "purpleTent"
+    var yOffset: CGFloat = 0
+    var tentShadowScale: CGFloat = 1
+}
+
+struct ShopItem: Equatable {
+    var itemName: String
+    var cost: Int
+}
+
 class Arrays {
+    
+    static var shopItemsGoodArray = [
+        ShopItem(itemName: "goodKnight1", cost: 1),
+        ShopItem(itemName: "goodKnight2", cost: 300),
+        ShopItem(itemName: "goodKnight3", cost: 400),
+        ShopItem(itemName: "goodKnight4", cost: 500),
+        ShopItem(itemName: "goodKnight5", cost: 700),
+        ShopItem(itemName: "goodKnight6", cost: 900)
+    ]
+    
+    static var shopItemsEvelArray = [
+        ShopItem(itemName: "evilKnight1", cost: 1),
+        ShopItem(itemName: "evilKnight2", cost: 300),
+        ShopItem(itemName: "evilKnight3", cost: 400),
+        ShopItem(itemName: "evilKnight4", cost: 500),
+        ShopItem(itemName: "evilKnight5", cost: 700),
+        ShopItem(itemName: "evilKnight6", cost: 900)
+    ]
+    
+    static var bonusTentArray: [BonusTent] = [
+        BonusTent(),
+        BonusTent(),
+        BonusTent(),
+        BonusTent(),
+        BonusTent()
+        ]
+    
+    static var rulesArray = ["rule1", "rule2", "rule3"]
+    
+    static var levelOffsetsArray = [-0.05,0.05,-0.05,0.05,-0.05,0.05]
     
     static var boomImagesArray = ["spriteBoom1", "spriteBoom2", "spriteBoom3", "spriteBoom4", "spriteBoom5", "spriteBoom6", "spriteBoom7"]
     

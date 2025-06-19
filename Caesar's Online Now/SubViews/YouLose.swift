@@ -31,6 +31,12 @@ struct YouLose: View {
                     .onTapGesture {
                         hideViewAnimation()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            enemyLevelCount = 0
+                            yourLevelCount = 0
+                            if  levelsCountData[levelNumber-1] < 3 {
+                                levelsCountData[levelNumber-1] = 0
+                                UserDefaults.standard.set(levelsCountData, forKey: "levelsCountData")
+                            }
                             coordinator.navigate(to: .mainMenu)
                         }
                     }
@@ -41,7 +47,18 @@ struct YouLose: View {
                     .onTapGesture {
                         hideViewAnimation()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            youLose.toggle()
+                            if enemyLevelCount < 2 {
+                                enemyLevelCount += 1
+                                youLose.toggle()
+                            } else {
+                                enemyLevelCount = 0
+                                yourLevelCount = 0
+                                if  levelsCountData[levelNumber-1] < 3 {
+                                    levelsCountData[levelNumber-1] = 0
+                                    UserDefaults.standard.set(levelsCountData, forKey: "levelsCountData")
+                                }
+                                coordinator.navigate(to: .choseLevel)
+                            }
                         }
                     }
             }
@@ -50,6 +67,7 @@ struct YouLose: View {
         
         .onAppear {
             showViewAnimation()
+            enemyLevelCount += 1
         }
     }
     

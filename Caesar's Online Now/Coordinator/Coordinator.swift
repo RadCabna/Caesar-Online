@@ -15,6 +15,8 @@ enum CoordinatorView: Equatable {
     case game
     case choseLevel
     case shop
+    case bonus
+    case rules
 }
 
 final class Coordinator: ObservableObject {
@@ -35,6 +37,10 @@ final class Coordinator: ObservableObject {
             view = AnyView(ChoseLevel())
         case .shop:
             view = AnyView(Shop())
+        case .bonus:
+            view = AnyView(DailyBonus())
+        case .rules:
+            view = AnyView(Rules())
             
         }
         return view
