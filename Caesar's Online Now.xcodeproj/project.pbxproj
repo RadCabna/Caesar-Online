@@ -6,26 +6,18 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DD99EF252E053C110065F386 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DD99EF242E053C110065F386 /* PrivacyInfo.xcprivacy */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		DD0A72652DF730800042ED7A /* Caesar's Online Now.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Caesar's Online Now.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD99EF242E053C110065F386 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		DD99EE692E041F040065F386 /* Exceptions for "Caesar's Online Now" folder in "Caesar's Online Now" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"Caesar-s-Online-Now-Info.plist",
-			);
-			target = DD0A72642DF730800042ED7A /* Caesar's Online Now */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DD0A72672DF730800042ED7A /* Caesar's Online Now */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				DD99EE692E041F040065F386 /* Exceptions for "Caesar's Online Now" folder in "Caesar's Online Now" target */,
-			);
 			path = "Caesar's Online Now";
 			sourceTree = "<group>";
 		};
@@ -45,6 +37,7 @@
 		DD0A725C2DF730800042ED7A = {
 			isa = PBXGroup;
 			children = (
+				DD99EF242E053C110065F386 /* PrivacyInfo.xcprivacy */,
 				DD0A72672DF730800042ED7A /* Caesar's Online Now */,
 				DD0A72662DF730800042ED7A /* Products */,
 			);
@@ -122,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD99EF252E053C110065F386 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +263,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
@@ -277,7 +272,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "f1.Caesar-s-Online-Now";
+				PRODUCT_BUNDLE_IDENTIFIER = com.degrnoceki.dremb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -307,6 +302,7 @@
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
@@ -315,7 +311,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 15.4;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "f1.Caesar-s-Online-Now";
+				PRODUCT_BUNDLE_IDENTIFIER = com.degrnoceki.dremb;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;

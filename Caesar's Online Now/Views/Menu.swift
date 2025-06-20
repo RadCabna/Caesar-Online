@@ -10,6 +10,7 @@ import SwiftUI
 struct Menu: View {
     @EnvironmentObject var coordinator: Coordinator
     @State private var settingsRotation: CGFloat = 0
+    @AppStorage("music") var music = true
     @AppStorage("coinCount") var coinCount = 0
     var body: some View {
         ZStack {
@@ -84,6 +85,10 @@ struct Menu: View {
         
         .onAppear {
             settingsRotationAnimation()
+            if music {
+                SoundManager.instance.stopAllSounds()
+                SoundManager.instance.playSound(sound: "musicMain")
+            }
         }
         
     }

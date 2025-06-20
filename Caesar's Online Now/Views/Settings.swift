@@ -71,6 +71,15 @@ struct Settings: View {
                     }
                 )
         }
+        
+        .onChange(of: music) { _ in
+            if !music {
+                SoundManager.instance.stopAllSounds()
+            } else {
+                SoundManager.instance.playSound(sound: "musicMain")
+            }
+        }
+        
     }
     
     func openAppStoreForRating() {
@@ -115,26 +124,6 @@ struct CustomToggle: ToggleStyle {
                             .offset(y: screenWidth*0.007)
                             .offset(x: configuration.isOn ? screenWidth*0.02 : -screenWidth*0.02)
                             .animation(.easeInOut, value: configuration.isOn)
-//                        RoundedRectangle(cornerRadius: screenHeight*0.015)
-//                            .frame(width: screenHeight*0.15, height: screenHeight*0.1)
-//                            .foregroundColor(configuration.isOn ? Color.togglecoloroff : Color.togglecoloron)
-//                            .shadow(radius: 1, y: 0)
-//                            .offset(x: configuration.isOn ? screenHeight*0.075 : -screenHeight*0.075)
-//                            .animation(.easeInOut, value: configuration.isOn)
-//                        RoundedRectangle(cornerRadius: screenHeight*0.015)
-//                            .stroke(lineWidth: 2)
-//                            .frame(width: screenHeight*0.15, height: screenHeight*0.1)
-//                            .foregroundColor(Color.white)
-//                            .shadow(radius: 1, y: 0)
-//                            .offset(x: configuration.isOn ? screenHeight*0.075 : -screenHeight*0.075)
-//                            .animation(.easeInOut, value: configuration.isOn)
-//                        Text(configuration.isOn ? "ON" : "OFF")
-//                            .font(.titanOne(size: screenWidth*0.025))
-//                            .foregroundColor(.white)
-//                            .shadow(color: .black, radius: 1)
-//                            .shadow(color: .black, radius: 1)
-//                            .offset(x: configuration.isOn ? screenHeight*0.075 : -screenHeight*0.075)
-//                            .animation(.easeInOut, value: configuration.isOn)
                     }
                 )
         }

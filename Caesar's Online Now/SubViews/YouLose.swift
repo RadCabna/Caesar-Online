@@ -14,6 +14,7 @@ struct YouLose: View {
     @AppStorage("enemyLevelCount") var enemyLevelCount = 0
     @AppStorage("levelNumber") var levelNumber = 1
     @AppStorage("coinCount") var coinCount = 0
+    @AppStorage("sound") var sound = true
     @State private var levelsCountData = UserDefaults.standard.array(forKey: "levelsCountData") as? [Int] ?? [3,0,0,0,0,0]
     @Binding var youLose: Bool
     var body: some View {
@@ -68,6 +69,9 @@ struct YouLose: View {
         .onAppear {
             showViewAnimation()
             enemyLevelCount += 1
+            if sound {
+                SoundManager.instance.playSound(sound: "failSound")
+            }
         }
     }
     

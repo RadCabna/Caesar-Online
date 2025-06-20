@@ -21,7 +21,6 @@ struct Loading: View {
             if isLandscape {
                 ZStack {
                     Background()
-                    Color("bgColor").ignoresSafeArea()
                     VStack(spacing: height*0.2) {
                         Image("logoText")
                             .resizable()
@@ -42,7 +41,6 @@ struct Loading: View {
             } else {
                 ZStack {
                     Background()
-                    Color("bgColor").ignoresSafeArea()
                     VStack(spacing: width*0.2) {
                         Image("logoText")
                             .resizable()
@@ -94,7 +92,7 @@ struct Loading: View {
             loadingOpacity = 1
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-            coordinator.navigate(to: .mainMenu)
+//            coordinator.navigate(to: .mainMenu)
         }
     }
     

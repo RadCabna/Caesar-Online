@@ -13,6 +13,9 @@ struct Game: View {
     @AppStorage("yourLevelCount") var yourLevelCount = 0
     @AppStorage("enemyLevelCount") var enemyLevelCount = 0
     @AppStorage("levelNumber") var levelNumber = 1
+    @AppStorage("sound") var sound = true
+    @AppStorage("music") var music = true
+    @AppStorage("vibration") var vibration = true
     @State private var levelsCountData = UserDefaults.standard.array(forKey: "levelsCountData") as? [Int] ?? [3,0,0,0,0,0]
     @State private var yourTurn: Bool = true
     @State private var redTentArray = Arrays.redTensArray
@@ -414,7 +417,13 @@ struct Game: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                 if warriorNumber == 2 {
                     blueTentArray[item].boomStart.toggle()
+                    if sound {
+                        SoundManager.instance.playSound(sound: "hitSound")
+                    }
                 } else {
+                    if sound {
+                        SoundManager.instance.playSound(sound: "hitSound")
+                    }
                     blueTentArray[item].smokeStart.toggle()
                 }
                 blueTentArray[item].itemName = "blastMark"
@@ -431,6 +440,9 @@ struct Game: View {
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
                 enemyStage = 0
+                if vibration {
+                    generateImpactFeedback(style: .heavy)
+                }
                 withAnimation() {
                     enemySolder = Arrays.enemySolder
                 }
@@ -456,6 +468,9 @@ struct Game: View {
             ammunitionArray[ammunitionNumber].opacity = 1
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            if sound {
+                SoundManager.instance.playSound(sound: "fireballSound")
+            }
             withAnimation(Animation.linear(duration: 1.5)) {
                 ammunitionArray[ammunitionNumber].positionY = -700
                 ammunitionArray[ammunitionNumber].positionX = -100
@@ -635,6 +650,9 @@ struct Game: View {
                 enemyAmmunitionArray[enemyAmmunitionNumber].opacity = 1
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if sound {
+                    SoundManager.instance.playSound(sound: "fireballSound")
+                }
                 withAnimation(Animation.linear(duration: 1.5)) {
                     enemyAmmunitionArray[enemyAmmunitionNumber].positionY = -700
                     enemyAmmunitionArray[enemyAmmunitionNumber].positionX = -100
@@ -675,8 +693,14 @@ struct Game: View {
 //                }
                 if enemyWarriorNumber == 2 {
                     redTentArray[randomeIndex].boomStart.toggle()
+                    if sound {
+                        SoundManager.instance.playSound(sound: "hitSound")
+                    }
                 } else {
                     redTentArray[randomeIndex].smokeStart.toggle()
+                    if sound {
+                        SoundManager.instance.playSound(sound: "hitSound")
+                    }
                 }
                 redTentArray[randomeIndex].itemName = "blastMark"
             }
@@ -688,6 +712,9 @@ struct Game: View {
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 8) {
                     yourStage = 1
+                    if vibration {
+                        generateImpactFeedback(style: .heavy)
+                    }
                     withAnimation() {
                         yourSolder = Arrays.yourSolder
                     }
@@ -897,6 +924,14 @@ struct Game: View {
     func stopBlinkBlueTentShadow() {
         blinkBlueTentTimer?.invalidate()
         blinkBlueTentTimer = nil
+    }
+    
+    func generateImpactFeedback(style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        let generator = UIImpactFeedbackGenerator(style: style)
+        if vibration {
+            generator.prepare()
+            generator.impactOccurred()
+        }
     }
     
 }

@@ -10,6 +10,7 @@ import SwiftUI
 struct GetBonus: View {
     @EnvironmentObject var coordinator: Coordinator
     @AppStorage("coinCount") var coinCount = 0
+    @AppStorage("sound") var sound = true
     @State private var bgOpacity: CGFloat = 0
     var body: some View {
         ZStack {
@@ -33,6 +34,9 @@ struct GetBonus: View {
         }
         .onAppear {
             showViewAnimation()
+            if sound {
+                SoundManager.instance.playSound(sound: "bonusWinSound")
+            }
         }
         
     }
